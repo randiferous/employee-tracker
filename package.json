@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
-  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js"
@@ -20,7 +19,7 @@
   "homepage": "https://github.com/randiferous/employee-tracker-challenge#readme",
   "dependencies": {
     "console.table": "^0.10.0",
-    "inquirer": "^9.0.0",
+    "inquirer": "^8.2.4",
     "mysql2": "^2.3.3"
   }
 }

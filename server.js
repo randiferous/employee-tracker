@@ -1,6 +1,6 @@
-import inquirer from 'inquirer';
+const inquirer = require('inquirer');
 
-import db from './db/connection.js';
+const db = require ('./db/connection.js');
 
 const cTable = require('console.table');
 
@@ -34,8 +34,8 @@ const viewDepartments = () => {
     const sql = `SELECT * FROM departments`;
     db.query(sql, (err, result) => {
         if (err) {
-            res.status(500).json({ error: err.message });
-            startApp();
+            console.log("error")
+            return startApp();
         }
         console.table(result);
         startApp();
