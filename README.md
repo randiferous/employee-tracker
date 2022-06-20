@@ -1,3 +1,3 @@
 # employee-tracker-challenge
 
-- direction does not explicitly tell us to download express, but it is necessary
+- obstacle: having to use "import" instead of "require" for inquirer. No idea why, but troubleshooted successfully.
