@@ -1,8 +1,9 @@
 const inquirer = require('inquirer');
 
-const db = require ('./db/connection.js');
+const db = require('./db/connection.js');
 
 const cTable = require('console.table');
+
 
 const startApp = () => {
     return inquirer
@@ -18,7 +19,8 @@ const startApp = () => {
                     'Add a department',
                     'Add a role',
                     'Add an employee',
-                    'Update an employee role'
+                    'Update an employee role',
+                    'Finished'
                 ]
             }
         ])
@@ -30,6 +32,12 @@ const startApp = () => {
                 viewRoles();
             } else if (response.decision === 'View all employees') {
                 viewEmployees();
+            } else if (response.decision === 'Add a department') {
+                addDepartment();
+            } else if (response.decision === 'Add a role') {
+                addRole();
+            } else if (response.decision === 'Finished') {
+                console.log("Goodbye!")
             }
         });
 };
@@ -83,6 +91,76 @@ const viewEmployees = () => {
         console.table(result);
         startApp();
     });
+}
+
+const addDepartment = () => {
+    return inquirer
+        .prompt([
+            {
+                type: 'input',
+                name: 'department',
+                message: 'What is the name of the department?'
+            }
+        ])
+        .then(departmentResponse => {
+            let response = departmentResponse;
+            const sql = `INSERT INTO department (name)
+        VALUES (?)`;
+            db.query(sql, response.department, (err) => {
+                if (err) {
+                    console.log(err)
+                    return startApp();
+                }
+                console.log("Added " + response.department + " to the database");
+                startApp();
+            });
+        });
+}
+
+const addRole = () => {
+    const sql = 'SELECT * FROM department';
+    db.query(sql, (err, departmentArray) => {
+        if (err) throw err;
+        const departmentChoices = departmentArray.map(department => ({ name: department.name, value: department.id }));
+        return inquirer
+            .prompt([
+                {
+                    type: 'input',
+                    name: 'role',
+                    message: 'What is the name of the role?'
+                },
+                {
+                    type: 'input',
+                    name: 'salary',
+                    message: 'What is the salary of the role?'
+                },
+                {
+                    type: 'list',
+                    name: 'department',
+                    message: 'Which department does the role belong to?',
+                    choices: departmentChoices
+                }
+            ])
+            .then(roleResponse => {
+                let response = [roleResponse.role, roleResponse.salary, roleResponse.department];
+
+                const roleSql = `INSERT INTO role (title, salary, department_id)
+                VALUES (?, ?, ?)`;
+
+                db.query(roleSql, response, (err) => {
+                    if (err) {
+                        console.log(err)
+                        return startApp();
+                    }
+                    console.log("Added " + response[0] + " to the database");
+                    startApp();
+                })
+            })
+    })
+}
+
+const addEmployee = () => {
+    
 }
 
 startApp()
