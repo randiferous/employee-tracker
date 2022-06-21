@@ -38,6 +38,8 @@ const startApp = () => {
                 addRole();
             } else if (response.decision === 'Add an employee') {
                 addEmployee();
+            } else if (response.decision === 'Update an employee role') {
+                updateEmployee();
             } else if (response.decision === 'Finished') {
                 console.log("Goodbye!")
             }
@@ -220,6 +222,60 @@ const addEmployee = () => {
                 });
             });
     });
+}
+
+const updateEmployee = () => {
+    const sql = `SELECT * FROM employee`;
+    db.query(sql, (err, employeeArray) => {
+        if (err) throw err;
+        const employeeChoices = employeeArray.map(employee => ({ name: employee.first_name + " " + employee.last_name, value: employee.id }))
+        inquirer
+        .prompt([
+            {
+                type: 'list',
+                name: 'employee',
+                message: "Which employee's role do you want to update?",
+                choices: employeeChoices
+            }
+        ])
+        .then(employeeResponse => {
+            let employeeId = employeeResponse.employee;
+            const response = [];
+            response.push(employeeId);
+
+            const roleSql = 'SELECT * FROM role';
+            db.query(roleSql, (err, roleArray) => {
+                if (err) throw err;
+                const roleChoices = roleArray.map(role => ({ name: role.title, value: role.id }))
+                inquirer
+                .prompt([
+                    {
+                        type: 'list',
+                        name: 'role',
+                        message: "What is the employee's new role?",
+                        choices: roleChoices
+                    }
+                ])
+                .then(roleResponse => {
+                    let roleId = roleResponse.role;
+                    response.unshift(roleId);
+
+                    console.log(response)
+                    const updateSql = `UPDATE employee SET role_id =?
+                    WHERE id = ?`;
+
+                    db.query(updateSql, response, (err) => {
+                        if (err) {
+                            console.log(err);
+                            return startApp();
+                        }
+                        console.log("Employee's role has been updated");
+                        startApp();
+                    })
+                })
+            })
+        })
+    })
 }
 
 startApp()
