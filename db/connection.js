@@ -2,6 +2,7 @@ const mysql = require('mysql2');
 
 // mysql -u root -p
 // source db/....
+// USE company
 
 const db = mysql.createConnection(
     {
