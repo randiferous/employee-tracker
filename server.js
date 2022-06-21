@@ -36,6 +36,8 @@ const startApp = () => {
                 addDepartment();
             } else if (response.decision === 'Add a role') {
                 addRole();
+            } else if (response.decision === 'Add an employee') {
+                addEmployee();
             } else if (response.decision === 'Finished') {
                 console.log("Goodbye!")
             }
@@ -160,7 +162,64 @@ const addRole = () => {
 }
 
 const addEmployee = () => {
-    
+    const sql = `SELECT * FROM role`;
+    db.query(sql, (err, roleArray) => {
+        if (err) throw err;
+        const roleChoices = roleArray.map(role => ({ name: role.title, value: role.id }));
+        return inquirer
+            .prompt([
+                {
+                    type: 'input',
+                    name: 'firstName',
+                    message: "What is the employee's first name?"
+                },
+                {
+                    type: 'input',
+                    name: 'lastName',
+                    message: "What is the employee's last name"
+                },
+                {
+                    type: 'list',
+                    name: 'role',
+                    message: "What is the employee's role?",
+                    choices: roleChoices
+                }
+            ])
+            .then(employeeResponse => {
+                let response = [employeeResponse.firstName, employeeResponse.lastName, employeeResponse.role];
+
+                const managerSql = `SELECT * FROM employee WHERE id BETWEEN 1 AND 3`;
+                db.query(managerSql, (err, managerArray) => {
+                    if (err) throw err;
+                    const managerChoices = managerArray.map(manager => ({ name: manager.first_name + " " + manager.last_name, value: manager.id }))
+                    inquirer
+                        .prompt([
+                            {
+                                type: 'list',
+                                name: 'manager',
+                                message: "Who is the employee's manager?",
+                                choices: managerChoices
+                            }
+                        ])
+                        .then(managerResponse => {
+                            let managerID = managerResponse.manager;
+                            response.push(managerID);
+
+                            const employeeSql = `INSERT INTO employee (first_name, last_name, role_id, manager_id)
+                        VALUES (? ,?, ?, ?)`;
+
+                            db.query(employeeSql, response, (err) => {
+                                if (err) {
+                                    console.log(err)
+                                    return startApp();
+                                }
+                                console.log("Added " + response[0] + " " + response[1] + " to the database");
+                                startApp();
+                            });
+                        });
+                });
+            });
+    });
 }
 
 startApp()
