@@ -54,7 +54,7 @@ const viewRoles = () => {
     ON role.department_id = department.id`;
     db.query(sql, (err, result) => {
         if (err) {
-            console.log("error")
+            console.log(err)
             return startApp();
         }
         console.table(result);
@@ -67,7 +67,7 @@ const viewEmployees = () => {
     role.title AS role_title,
     role.salary AS role_salary,
     department.name AS department_name,
-    CONCAT(employee.first_name, ' ', employee.last_night) AS manager
+    CONCAT(employee.first_name, ' ', employee.last_name) AS manager
     FROM employee
     LEFT JOIN role
     ON employee.role_id = role.id
@@ -77,7 +77,7 @@ const viewEmployees = () => {
     ON employee.manager_id = employee.id`;
     db.query(sql, (err, result) => {
         if (err) {
-            console.log("error")
+            console.log(err)
             return startApp();
         }
         console.table(result);
