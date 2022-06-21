@@ -260,7 +260,6 @@ const updateEmployee = () => {
                     let roleId = roleResponse.role;
                     response.unshift(roleId);
 
-                    console.log(response)
                     const updateSql = `UPDATE employee SET role_id =?
                     WHERE id = ?`;
 

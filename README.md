@@ -34,3 +34,5 @@ What I liked about this challenge was that each acceptance criteria was it's own
 Overall, this was an enjoyable assignment that has great educational value.
 
 ## Walkthrough Video
+
+Here is a link to the walkthrough video of the application: https://drive.google.com/file/d/1kHBQAvL2LiiOZpg5xifyTTMD035NVKAQ/view?usp=sharing
